@@ -7,4 +7,25 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  namespace :api do
+    namespace :v1 do
+      post "auth/google", to: "auth#google"
+      get "me", to: "auth#me"
+
+      resources :beacons do
+        member do
+          post :join
+          path :leave
+        end
+
+        resources :participants, only: [] do
+          member do
+            patch :approve
+            patch :reject
+          end
+        end
+      end
+    end
+  end
 end

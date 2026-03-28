@@ -34,6 +34,12 @@ gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
+gem "omniauth-google_oauth2"
+
+gem "google-id-token"
+
+gem "jwt"
+
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -47,4 +53,14 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  gem "dotenv-rails"
+
+  # Use Pry as the Rails console and for debugging
+  gem "pry-rails"
+  # Adds step-by-step navigation commands (step, next, finish, continue)
+  gem "pry-byebug"
+
+  gem "rspec-rails"
+  gem "factory_bot_rails"
 end
