@@ -25,6 +25,12 @@ require 'rspec/rails'
 #
 # Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
+# Configure FactoryBot
+require 'factory_bot_rails'
+RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+end
+
 # Ensures that the test database schema matches the current schema file.
 # If there are pending migrations it will invoke `db:test:prepare` to
 # recreate the test database by loading the schema.

@@ -11,12 +11,17 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       post "auth/google", to: "auth#google"
+      post "auth/register", to: "auth#register"
+      post "auth/login", to: "auth#login"
+      post "auth/password/reset", to: "auth#password_reset"
+      post "auth/password/confirm", to: "auth#password_confirm"
+      post "auth/link_password", to: "auth#link_password"
       get "me", to: "auth#me"
 
       resources :beacons do
         member do
           post :join
-          path :leave
+          delete :leave
         end
 
         resources :participants, only: [] do

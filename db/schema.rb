@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_04_143328) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_19_100856) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,11 +39,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_04_143328) do
     t.index ["creator_id"], name: "index_beacons_on_creator_id"
   end
 
+  create_table "password_resets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.string "token"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["token"], name: "index_password_resets_on_token", unique: true
+    t.index ["user_id"], name: "index_password_resets_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
-    t.string "google_uid", null: false
+    t.string "google_uid"
     t.string "name"
+    t.string "password_digest"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["google_uid"], name: "index_users_on_google_uid", unique: true
@@ -52,4 +63,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_04_143328) do
   add_foreign_key "beacon_participants", "beacons"
   add_foreign_key "beacon_participants", "users"
   add_foreign_key "beacons", "users", column: "creator_id"
+  add_foreign_key "password_resets", "users"
 end
