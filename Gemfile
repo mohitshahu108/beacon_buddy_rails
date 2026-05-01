@@ -40,6 +40,9 @@ gem "google-id-token"
 
 gem "jwt"
 
+# MailerSend for email delivery
+gem "mailersend-ruby"
+
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -63,4 +66,7 @@ group :development, :test do
 
   gem "rspec-rails"
   gem "factory_bot_rails"
+
+  # Preview emails in browser during development
+  gem "letter_opener", "~> 1.8"
 end

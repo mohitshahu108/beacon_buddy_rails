@@ -5,6 +5,58 @@ module Api
     class AuthController < ApplicationController
       before_action :authenticate_user!, only: [ :me, :link_password ]
 
+      def send_verification
+        email = params[:email]
+        
+        # Check if email already exists
+        if User.exists?(email: email)
+          render json: {
+            error: {
+              code: "email_exists",
+              message: "This email is already registered"
+            }
+          }, status: :conflict
+          return
+        end
+
+        # Generate verification token
+        token = EmailVerification.generate_for(email)
+        
+        # Send verification email
+        VerificationMailer.verification_email(email, token).deliver_later
+
+        render json: {
+          message: "Verification email sent"
+        }
+      rescue StandardError => e
+        render json: {
+          error: {
+            code: "verification_failed",
+            message: "Failed to send verification email",
+            details: [e.message]
+          }
+        }, status: :internal_server_error
+      end
+
+      def verify_email
+        email = params[:email]
+        token = params[:verification_token]
+
+        if EmailVerification.verify(email, token)
+          render json: {
+            message: "Email verified successfully",
+            verified: true
+          }
+        else
+          render json: {
+            error: {
+              code: "invalid_token",
+              message: "Invalid or expired verification token"
+            }
+          }, status: :unauthorized
+        end
+      end
+
       def google
         validator = GoogleIDToken::Validator.new
 
@@ -38,9 +90,26 @@ module Api
       end
 
       def register
-        user = User.new(email: params[:email], password: params[:password], name: params[:name])
+        # Verify email token first
+        email = params[:email]
+        verification_token = params[:verification_token]
+
+        unless EmailVerification.verified?(email, verification_token)
+          render json: {
+            error: {
+              code: "email_not_verified",
+              message: "Email must be verified before registration"
+            }
+          }, status: :forbidden
+          return
+        end
+
+        user = User.new(email: email, password: params[:password], name: params[:name])
 
         if user.save
+          # Delete the email verification record after successful registration
+          EmailVerification.where(email: email).destroy_all
+
           token = JwtService.encode(user_id: user.id)
           render json: {
             token: token,

@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      post "auth/send_verification", to: "auth#send_verification"
+      post "auth/verify_email", to: "auth#verify_email"
       post "auth/google", to: "auth#google"
       post "auth/register", to: "auth#register"
       post "auth/login", to: "auth#login"

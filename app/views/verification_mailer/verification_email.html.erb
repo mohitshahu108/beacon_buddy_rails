@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      background-color: #f9f9f9;
+      padding: 30px;
+      border-radius: 8px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      color: #4A90E2;
+      margin: 0;
+    }
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .token-box {
+      background-color: #4A90E2;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 5px;
+      margin: 20px 0;
+      letter-spacing: 2px;
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>BeaconBuddy</h1>
+    </div>
+    
+    <div class="content">
+      <h2>Email Verification</h2>
+      <p>Hello,</p>
+      <p>Thank you for signing up for BeaconBuddy! To complete your registration, please use the verification token below:</p>
+      
+      <div class="token-box">
+        <%= @token %>
+      </div>
+      
+      <p><strong>Instructions:</strong></p>
+      <ol>
+        <li>Copy the token above</li>
+        <li>Return to the BeaconBuddy app</li>
+        <li>Paste the token in the verification field</li>
+        <li>Enter your password to complete registration</li>
+      </ol>
+      
+      <p><em>This token will expire in 2 hours.</em></p>
+      
+      <p>If you did not request this verification, please ignore this email.</p>
+    </div>
+    
+    <div class="footer">
+      <p>&copy; <%= Time.current.year %> BeaconBuddy. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

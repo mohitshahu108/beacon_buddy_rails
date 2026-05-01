@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_19_100856) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_23_183000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -37,6 +37,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_19_100856) do
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_beacons_on_creator_id"
+  end
+
+  create_table "email_verifications", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "verification_token", null: false
+    t.boolean "verified", default: false
+    t.index ["email"], name: "index_email_verifications_on_email", unique: true
+    t.index ["expires_at"], name: "index_email_verifications_on_expires_at"
+    t.index ["verification_token"], name: "index_email_verifications_on_verification_token", unique: true
   end
 
   create_table "password_resets", force: :cascade do |t|
