@@ -1,12 +1,35 @@
 module Api
     module V1
         class BeaconsController < ApplicationController
-            before_action :authenticate_user!
+            before_action :authenticate_user! , except: [:index] 
             before_action :set_beacon, only: [ :show, :update, :destroy, :join ]
+
+            def index 
+                beacons = Beacon.includes(:creator, :participants)
+                            .where(status: :published)
+                            .where('event_time > ?', Time.current)
+                            .order(event_time: :asc)
+
+                # Apply filters if provided
+                if params[:category].present?
+                    beacons = beacons.where(category: params[:category])
+                end
+                
+                if params[:beacon_type].present?
+                    beacons = beacons.where(beacon_type: params[:beacon_type])
+                end
+                
+                if params[:join_policy].present?
+                    beacons = beacons.where(join_policy: params[:join_policy])
+                end
+                
+                render json: beacons, include: [:creator, :participants]
+            end
 
             # POST api/v1/beacons
             def create
                 beacon = current_user.created_beacons.new(beacon_params)
+                beacon.status = :published
 
                 if beacon.save
                     # auto-add creator as joined participant
@@ -97,6 +120,7 @@ module Api
                     :description,
                     :category,
                     :beacon_type,
+                    :join_policy,
                     :privacy,
                     :event_time,
                     :max_participants
