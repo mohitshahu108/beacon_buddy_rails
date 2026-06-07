@@ -131,7 +131,6 @@ module Api
       end
 
       def login
-        binding.pry
         user = User.find_by(email: params[:email])
 
         if user&.authenticate(params[:password])
