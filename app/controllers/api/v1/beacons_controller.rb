@@ -68,25 +68,24 @@ module Api
                     return render json: { error: "Cannot join past beacon" }, status: :unprocessable_entity
                 end
 
-                if @beacon.joined_count >= beacon.max_participants
+                if @beacon.joined_count >= @beacon.max_participants
                     return render json: { error: "Beacon is full" }, status: :unprocessable_entity
                 end
 
                 existing = @beacon.beacon_participants.find_by(user: current_user)
-                if existing.present? && !existing.left?
-                    return render json: { error: "Already requested or joined" }, status: :unprocessable_entity
-                end
 
-                if existing.rejected?
-                    return render json: { error: "Request was rejected" }, status: :unprocessable_entity
-                end
+                if existing.present?
+                    if existing.rejected?
+                        return render json: { error: "Request was rejected" }, status: :unprocessable_entity
+                    end
 
-                # Handle rejoin if user left previously
-                if existing&.left?
-                    participant = existing
-                    # Reset status based on policy
-                    participant.status = @beacon.open? ? :joined : :pending
-                    participant.save!
+                    unless existing.left?
+                        return render json: { error: "Already requested or joined" }, status: :unprocessable_entity
+                    end
+
+                    # Handle rejoin if user left previously
+                    existing.status = @beacon.open? ? :joined : :pending
+                    existing.save!
                     return render json: { message: "Request submitted" }, status: :ok
                 end
 

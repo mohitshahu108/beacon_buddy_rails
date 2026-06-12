@@ -7,12 +7,12 @@ module Api
 
       def approve
         return render_error("Beacon must be personal", 422) unless @beacon.personal?
-        return render_error("Beacon is not active", 422) unless @beacon.active?
-        return render_error("Event has already passed", 422) if @beacon.event_date.past?
+        return render_error("Beacon is not published or active", 422) unless @beacon.published? || @beacon.active?
+        return render_error("Event has already passed", 422) if @beacon.event_time.past?
         return render_error("Participant is not pending", 422) unless @participant.pending?
         return render_error("Beacon is full", 422) if beacon_full?
 
-        @participant.update!(status: :approved)
+        @participant.update!(status: :joined)
 
         render json: @participant, status: :ok
       end
@@ -42,7 +42,7 @@ module Api
       end
 
       def beacon_full?
-        @beacon.beacon_participants.approved.count >= @beacon.max_participants
+        @beacon.beacon_participants.where(status: :joined).count >= @beacon.max_participants
       end
 
       def render_error(message, status)
